@@ -1,0 +1,9 @@
+target 'BorrowingTreasure' do
+pod ‘AFNetworking’
+pod ‘MJRefresh’
+pod ‘IQKeyboardManager’
+pod 'SVProgressHUD'
+pod ‘MJExtension’
+pod "Qiniu"
+
+end

@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "AFNetworking.h"
 
 @interface AppDelegate ()
 
@@ -16,9 +17,46 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+
+    [[UINavigationBar appearance] setBarTintColor:[UIColor whiteColor]];
+    [[UINavigationBar appearance] setTintColor:MAIN_NAV_COLOR];
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : MAIN_NAV_COLOR}];
+    [[UITabBarItem appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : MAIN_NAV_COLOR} forState:UIControlStateSelected];
+    
+    [[UIBarButtonItem appearance] setBackButtonTitlePositionAdjustment:UIOffsetMake(0, -60) forBarMetrics:UIBarMetricsDefault];
+    
+      [self reach];
+    
+    
     return YES;
 }
+
+- (void)reach
+{
+    /**
+     AFNetworkReachabilityStatusUnknown          = -1,  // 未知
+     AFNetworkReachabilityStatusNotReachable     = 0,   // 无连接
+     AFNetworkReachabilityStatusReachableViaWWAN = 1,   // 3G 花钱
+     AFNetworkReachabilityStatusReachableViaWiFi = 2,   // 局域网络,不花钱
+     */
+    // 如果要检测网络状态的变化,必须用检测管理器的单例的startMonitoring
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    // 检测网络连接的单例,网络变化时的回调方法
+    
+    _isreach = NO;
+    [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        if (status == AFNetworkReachabilityStatusNotReachable || status == AFNetworkReachabilityStatusUnknown) {
+            [ResponseModel showInfoWithString:@"您的网络似乎有点问题"];
+            _isreach = YES;
+        }else{
+            if (_isreach) {
+                [ResponseModel showInfoWithString:@"已经连上网络"];
+            }
+        }
+    }];
+}
+
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
